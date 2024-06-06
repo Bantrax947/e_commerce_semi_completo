@@ -1,7 +1,9 @@
+
 const express = require('express');
 const router = express.Router();
+const authController = require('../Controllers/authController');
 
-//router para las vistas
+// Router para las vistas
 router.get('/', (req, res) => {
     res.render('index'); // Página principal
 });
@@ -18,9 +20,11 @@ router.get('/register', (req, res) => {
     res.render('register'); // Página de registro
 });
 
-//router para los métodos del controller
-//router.post('/register', authController.register)
-//router.post('/login', authController.login)
-//router.get('/logout', authController.logout)
+// Router para los métodos del controller
+router.post('/register', authController.register);
+router.post('/login', (req, res) => {
+    // Lógica de inicio de sesión
+    res.send('Inicio de sesión');
+});
 
 module.exports = router;
