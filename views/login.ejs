@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,10 +7,9 @@
     <link rel="stylesheet" href="css/style.css">
     <title>E-COMMERCE</title>
 </head>
-
 <body>
     <div class="container" id="container">
-          <!-- CREAR UN NUEVO USUARIO -->
+        <!-- CREAR UN NUEVO USUARIO -->
         <div class="form-container sign-up">
             <form id="fromlogin" action="/register" method="post">
                 <h1>Crear Una Cuenta</h1>
@@ -55,12 +53,26 @@
                 <div class="toggle-panel toggle-right">
                     <h1>Hola Amigos!</h1>
                     <p>Registrarse con sus datos para utilizar todas las funcionalidades del sitio</p>
-                    <button class="hidden" id="register">Iniciar Sesión</button>
+                    <button href="/register" class="hidden" id="register">Iniciar Sesión</button>
                 </div>
             </div>
         </div>
     </div>
     <script src="js/script.js"></script>
-</body>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+    <% if (alert) { %>
+    <script>
+        Swal.fire({
+            title: '<%= alertTitle %>',
+            text: '<%= alertMessage %>',
+            icon: '<%= alertIcon %>',
+            showConfirmButton: <%= showConfirmButton %>,
+            timer: <%= timer %>
+        }).then(() => {
+            window.location = '/<%= ruta %>';
+        });
+    </script>
+    <% } %>
+</body>
 </html>
