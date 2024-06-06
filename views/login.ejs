@@ -36,8 +36,8 @@
                     <a href="#" class="icon"><i class="fa-brands fa-github"></i></a>
                 </div>
                 <span></span>
-                <input name="email" type="email" placeholder="Email" required>
-                <input name="pass" type="password" placeholder="Password" required>
+                <input name="email" type="email" placeholder="Email" >
+                <input name="pass" type="password" placeholder="Password" >
                 <a href="#">Olvidaste tu contraseña?</a>
                 <button type="submit">Iniciar Sesión</button>
             </form>
@@ -62,17 +62,21 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <% if (alert) { %>
-    <script>
-        Swal.fire({
-            title: '<%= alertTitle %>',
-            text: '<%= alertMessage %>',
-            icon: '<%= alertIcon %>',
-            showConfirmButton: <%= showConfirmButton %>,
-            timer: <%= timer %>
-        }).then(() => {
-            window.location = '/<%= ruta %>';
-        });
-    </script>
+        <script>
+            Swal.fire({
+                title: '<%= alertTitle %>',
+                text: '<%= alertMessage %>',
+                icon: '<%= alertIcon %>',
+                showConfirmButton: <%= showConfirmButton %>,
+                timer: <%= timer %>
+            }).then(() => {
+                if ('<%= ruta %>' !== '') {
+                    window.location = '/<%= ruta %>';
+                } else {
+                    window.location = '/';
+                }
+            });
+        </script>
     <% } %>
 </body>
 </html>
