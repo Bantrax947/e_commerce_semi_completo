@@ -1,27 +1,26 @@
-const express = require('express')
-const router = express.Router()
-
-//const authController = require('../controllers/authController')
+const express = require('express');
+const router = express.Router();
 
 //router para las vistas
-//router.get('/', authController.isAuthenticated, (req, res)=>{ 
-    
+router.get('/', (req, res) => {
+    res.render('index'); // Página principal
+});
 
-router.get('/',(req,res)=>{
-    res.render('index')
-})
-router.get('/login',(req,res)=>{
-    res.render('login')
-})
-router.get('/resgister',(req,res)=>{
-    res.render('resgister')
-})
+router.get('/carrito', (req, res) => {
+    res.render('carrito'); // Página del carrito
+});
 
+router.get('/login', (req, res) => {
+    res.render('login'); // Página de login
+});
 
+router.get('/register', (req, res) => {
+    res.render('register'); // Página de registro
+});
 
 //router para los métodos del controller
 //router.post('/register', authController.register)
 //router.post('/login', authController.login)
 //router.get('/logout', authController.logout)
 
-module.exports = router
+module.exports = router;
