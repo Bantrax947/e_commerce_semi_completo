@@ -1,18 +1,15 @@
 /* 
-
-
 const express = require('express');
 const router = express.Router();
-const authController = require('../controllers/authController');
+const authController = require('../Controllers/authController');
 
-// Ruta de inicio de sesión (pública)
+// Rutas públicas
 router.get('/login', (req, res) => {
     res.render('login', { alert: false });
 });
 
-// Ruta de registro (pública)
 router.get('/register', (req, res) => {
-    res.render('register', { alert: false });
+    res.render('login', { alert: false });
 });
 
 router.post('/register', authController.register);
@@ -35,7 +32,7 @@ module.exports = router;
 
 const express = require('express');
 const router = express.Router();
-const authController = require('../controllers/authController');
+const authController = require('../Controllers/authController');
 
 // Rutas públicas
 router.get('/login', (req, res) => {
@@ -43,7 +40,7 @@ router.get('/login', (req, res) => {
 });
 
 router.get('/register', (req, res) => {
-    res.render('register', { alert: false });
+    res.render('login', { alert: false });
 });
 
 router.post('/register', authController.register);
@@ -62,3 +59,4 @@ router.get('/carrito', (req, res) => {
 });
 
 module.exports = router;
+

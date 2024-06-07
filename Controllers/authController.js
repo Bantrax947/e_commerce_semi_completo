@@ -1,4 +1,5 @@
-/* const { promisify } = require('util');
+/* 
+const { promisify } = require('util');
 const bcryptjs = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const conexion = require('../DataBase/Conexion');
@@ -130,23 +131,27 @@ exports.login = async (req, res) => {
 exports.autenticacion = async (req, res, next) => {
     if (req.cookies.jwt) {
         try {
+            // Verifica el JWT
             const decodificada = await promisify(jwt.verify)(req.cookies.jwt, process.env.JWT_SECRETO);
+            // Busca al usuario en la base de datos
             conexion.query('SELECT * FROM usuario WHERE idUsuario = ?', [decodificada.id], (error, results) => {
-                if (!results || results.length === 0) {
-                    return res.redirect('/login'); // Redirige a la página de login si no hay resultados
+                if (error || results.length === 0) {
+                    return res.redirect('/login'); // Redirige a la página de login si hay un error o no se encuentra el usuario
                 }
                 req.user = results[0];
                 return next();
             });
         } catch (error) {
             console.log(error);
-            return res.redirect('/login');
+            return res.redirect('/login'); // Redirige a la página de login si hay un error con el JWT
         }
     } else {
         return res.redirect('/login'); // Redirige a la página de login si no hay una cookie de sesión
     }
 } */
-const { promisify } = require('util');
+
+
+    const { promisify } = require('util');
 const bcryptjs = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const conexion = require('../DataBase/Conexion');
@@ -233,8 +238,8 @@ exports.login = async (req, res) => {
                 });
             }
 
-            const user = results[0];
-            const passwordMatch = await bcryptjs.compare(pass, user.clave);
+            const usuario = results[0];
+            const passwordMatch = await bcryptjs.compare(pass, usuario.clave);
 
             if (!passwordMatch) {
                 return res.render('login', {
@@ -248,7 +253,7 @@ exports.login = async (req, res) => {
                 });
             }
 
-            const id = user.idUsuario;
+            const id = usuario.idUsuario;
             const token = jwt.sign({ id: id }, process.env.JWT_SECRETO, {
                 expiresIn: process.env.JWT_TIEMPO_EXPIRA
             });
@@ -274,8 +279,7 @@ exports.login = async (req, res) => {
     }
 };
 
-
-
+// Middleware de autenticación
 exports.autenticacion = async (req, res, next) => {
     if (req.cookies.jwt) {
         try {
@@ -297,6 +301,7 @@ exports.autenticacion = async (req, res, next) => {
         return res.redirect('/login'); // Redirige a la página de login si no hay una cookie de sesión
     }
 }
+
 
 
 /* // Método de autenticación
