@@ -9,6 +9,7 @@ const contenedorCarritoComprado = document.querySelector("#carrito-comprado");
 const botonComprar= document.querySelector("#carrito-acciones-comprado");
 const botonVaciar= document.querySelector("#carrito-acciones-vaciar");
 
+
 const total = document.querySelector("#total");
 
 function cargarProductosCarrito() {

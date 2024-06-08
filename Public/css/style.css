@@ -16,7 +16,7 @@ body {
     justify-content: center;
     flex-direction: column;
     height: 100vh;
-    padding-top: 100px; /* Añadir padding para que el contenido no se superponga */
+    padding-top: 5.5rem; /* Añadir padding para que el contenido no se superponga */
 }
 
 /* CSS DE LA BARRA DE NAVEGACION DEL LOGIN */
@@ -28,7 +28,7 @@ body {
     width: 100%;
     height: 100px;
     line-height: 100px;
-    background: linear-gradient(rgba(39, 39, 39, 0.6), transparent);
+    background: linear-gradientto (to right, #ab4623, #ebac5e);
     z-index: 100;
 }
 
@@ -55,15 +55,23 @@ body {
     margin: 0 25px;
 }
 
+/* Estilos base para el botón */
 .nav-button .btn {
     width: 130px;
     height: 40px;
     font-weight: 500;
     background: rgba(255, 255, 255, 0.4);
-    border: none;
+    border: 2px solid transparent; /* Borde inicial transparente */
     border-radius: 30px;
     cursor: pointer;
-    transition: .3s ease;
+    transition: border-color 0.3s ease, background-color 0.4s ease, color 0.3s ease; /* Transición para el borde y el fondo */
+}
+
+/* Estilos al pasar el cursor sobre el botón */
+.nav-button .btn:hover {
+    border-color: rgb(143, 69, 19); /* Cambia el borde a visible */
+    background: rgba(255, 255, 255, 0.6); /* Cambia el fondo para resaltar */
+    color: rgb(143, 69, 19); /* Cambia el color del texto para mejor contraste */
 }
 
 .container {
@@ -100,7 +108,7 @@ body {
     color: #fff;
     font-size: 12px;
     padding: 10px 45px;
-    border: 1px solid transparent;
+    border: 2px solid white;
     border-radius: 8px;
     font-weight: 600;
     letter-spacing: 0.5px;

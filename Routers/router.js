@@ -27,5 +27,6 @@ router.get('/', (req, res) => {
 router.get('/carrito', (req, res) => {
     res.render('carrito');
 });
+router.get('/logout', authController.logout);
 
 module.exports = router;
