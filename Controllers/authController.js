@@ -195,6 +195,7 @@ exports.register = async (req, res) => {
     }
 };
 
+
 // Método para iniciar sesión
 exports.login = async (req, res) => {
     try {
@@ -227,6 +228,7 @@ exports.login = async (req, res) => {
             }
 
             if (results.length === 0) {
+                console.log("Usuario no encontrado con ese email");
                 return res.render('login', {
                     alert: true,
                     alertTitle: "Error",
@@ -242,6 +244,7 @@ exports.login = async (req, res) => {
             const passwordMatch = await bcryptjs.compare(pass, usuario.clave);
 
             if (!passwordMatch) {
+                console.log("Contraseña incorrecta");
                 return res.render('login', {
                     alert: true,
                     alertTitle: "Error",
@@ -257,11 +260,15 @@ exports.login = async (req, res) => {
             const token = jwt.sign({ id: id }, process.env.JWT_SECRETO, {
                 expiresIn: process.env.JWT_TIEMPO_EXPIRA
             });
+            console.log("Token generado:", token);
+
             const cookiesOptions = {
                 expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES * 24 * 60 * 60 * 1000),
                 httpOnly: true
             };
             res.cookie('jwt', token, cookiesOptions);
+            console.log("Cookie 'jwt' configurada con las opciones:", cookiesOptions);
+
             return res.render('login', {
                 alert: true,
                 alertTitle: "Conexión exitosa",
@@ -279,28 +286,30 @@ exports.login = async (req, res) => {
     }
 };
 
-// Middleware de autenticación
 exports.autenticacion = async (req, res, next) => {
     if (req.cookies.jwt) {
         try {
-            // Verifica el JWT
             const decodificada = await promisify(jwt.verify)(req.cookies.jwt, process.env.JWT_SECRETO);
-            // Busca al usuario en la base de datos
+            console.log("Token JWT decodificado:", decodificada);
+
             conexion.query('SELECT * FROM usuario WHERE idUsuario = ?', [decodificada.id], (error, results) => {
                 if (error || results.length === 0) {
-                    return res.redirect('/login'); // Redirige a la página de login si hay un error o no se encuentra el usuario
+                    console.error("Error en la consulta o usuario no encontrado");
+                    return res.redirect('/login');
                 }
                 req.user = results[0];
+                console.log("Usuario autenticado:", req.user);
                 return next();
             });
         } catch (error) {
-            console.log(error);
-            return res.redirect('/login'); // Redirige a la página de login si hay un error con el JWT
+            console.error("Error al verificar el JWT:", error);
+            return res.redirect('/login');
         }
     } else {
-        return res.redirect('/login'); // Redirige a la página de login si no hay una cookie de sesión
+        console.error("No se encontró la cookie de sesión");
+        return res.redirect('/login');
     }
-}
+};
 
 
 
