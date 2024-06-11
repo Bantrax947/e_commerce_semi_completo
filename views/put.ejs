@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Update Product</title>
+   
+   <!-- font awesome cdn link  -->
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+   <!-- custom css file link  -->
+   <link rel="stylesheet" href="css/styleCrud.css">
+</head>
+<body>
+
+<div class="container">
+
+   <div class="admin-product-form-container centered">
+   
+      <form id="updateProductForm">
+         <h3 class="title">update the product</h3>
+         <input type="text" class="box" id="updateProductName" placeholder="enter the product name" required>
+         <input type="file" class="box" id="updateProductImage" accept="image/png, image/jpeg, image/jpg" required>
+         <input type="number" min="0" class="box" id="updateProductPrice" placeholder="enter the product price" required>
+         <input type="number" min="0" class="box" id="updateProductPrice" placeholder="enter the product price" required>
+         <input type="submit" value="update product" class="btn">
+         <a href="admin_page.html" class="btn">go back!</a>
+      </form>
+
+   </div>
+
+</div>
+
+<script>
+document.getElementById('updateProductForm').addEventListener('submit', function(e) {
+   e.preventDefault();
+   
+   const productName = document.getElementById('updateProductName').value;
+   const productPrice = document.getElementById('updateProductPrice').value;
+   const productImage = document.getElementById('updateProductImage').files[0];
+
+   if (productName && productPrice && productImage) {
+      const reader = new FileReader();
+      reader.onload = function(event) {
+         const productRow = document.createElement('tr');
+         productRow.innerHTML = `
+            <td><img src="${event.target.result}" height="100" alt=""></td>
+            <td>${productName}</td>
+            <td>$${productPrice}/-</td>
+            <td>
+               <button class="btn" onclick="editProduct(this)"> <i class="fas fa-edit"></i> edit </button>
+               <button class="btn" onclick="deleteProduct(this)"> <i class="fas fa-trash"></i> delete </button>
+            </td>
+         `;
+         document.getElementById('productTable').appendChild(productRow);
+      };
+      reader.readAsDataURL(productImage);
+      
+      // Clear form
+      document.getElementById('updateProductForm').reset();
+   }
+});
+
+function editProduct(button) {
+   const row = button.parentElement.parentElement;
+   const name = row.children[1].textContent;
+   const price = row.children[2].textContent.substring(1, row.children[2].textContent.length - 2);
+   
+   document.getElementById('updateProductName').value = name;
+   document.getElementById('updateProductPrice').value = price;
+   // Note: Image editing requires additional logic
+   row.remove();
+}
+
+function deleteProduct(button) {
+   button.parentElement.parentElement.remove();
+}
+</script>
+
+</body>
+</html>
