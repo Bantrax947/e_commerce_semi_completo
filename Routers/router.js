@@ -94,15 +94,30 @@ router.get('/register', (req, res) => {
 
 // RUTAS DEL CRUD
 router.get('/get', (req, res) => {
-    conexion.query('SELECT * FROM usuario', (error, results) => {
+    conexion.query('SELECT * FROM productos', (error, results) => {
         if (error) {
             console.log("NO FUNCIONÓ EL LLAMADO");
             res.status(500).send("Error en la consulta de la base de datos");
         } else {
             res.render('Admin/get', { results: results });
+        } 
+     
+    });
+});
+
+//RUTA EN DONDE SE OBTIENE LOS PRODUCTOS DESDE LA BD
+
+router.get('/api/productos', (req, res) => {
+    conexion.query('SELECT * FROM productos', (error, results) => {
+        if (error) {
+            console.log("Error en la consulta de la base de datos");
+            res.status(500).send("Error en la consulta de la base de datos");
+        } else {
+            res.json(results);
         }
     });
 });
+
 
 router.get('/put', (req, res) => {
     res.render('Admin/put');

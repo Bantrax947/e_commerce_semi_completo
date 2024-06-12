@@ -34,20 +34,20 @@
             <table class="product-display-table">
                 <thead>
                     <tr>
-                        <th>Nombre</th>
-                        <th>Apellido</th>
-                        <th>Email</th>
-                        <th>Clave</th>
+                        <th>Titulo</th>
+                        <th>Imagen</th>
+                        <th>Precio</th>
+                        <th>Categoria</th>
                         <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
                     <% results.forEach((user) => { %>
                     <tr>
-                        <td><%= user.Nombre %></td>
-                        <td><%= user.Apellido %></td>
-                        <td><%= user.Email %></td>
-                        <td><%= user.clave %></td>
+                        <td><%= user.titulo %></td>
+                        <td><%= user.imagen %></td>
+                        <td><%= user.precio %></td>
+                        <td><%= user.id_categoria %></td>
                         <td>
                             <!-- Aquí puedes añadir botones de acción, como editar y eliminar -->
                         </td>

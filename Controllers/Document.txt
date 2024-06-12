@@ -1,0 +1,3 @@
+Se encarga de que funcione y se validen el inicio de sesion y el registro de los 
+nuevos usuarios asi como se asegura de que no se pueda acceder al página raiz si estar
+ verificado por el correo
