@@ -1,5 +1,3 @@
-
-
 const { promisify } = require('util');
 const bcryptjs = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -8,34 +6,63 @@ const conexion = require('../DataBase/Conexion');
 /* METODO PARA REGISTRAR USUARIO */
 exports.register = async (req, res) => {
     try {
-        const { firstname, lastname, email, pass } = req.body;//SE ATRAPAN LOS DATOS
+        const { firstname, lastname, email, pass } = req.body;
         const passHash = await bcryptjs.hash(pass, 8);
 
-        conexion.query('INSERT INTO usuario (Nombre, Apellido, Email, clave) VALUES (?, ?, ?, ?)', 
-        [firstname, lastname, email, passHash], //SE INSERTA EN LA BD
-        (error, results) => {
+        // Verificar si el correo electrónico ya está registrado
+        conexion.query('SELECT * FROM usuario WHERE Email = ?', [email], (error, results) => {
             if (error) {
                 console.log(error);
-                return res.render('login', {
+                return res.render('Client/login', {
                     alert: true,
                     alertTitle: "Error",
-                    alertMessage: "Error al registrar usuario",
+                    alertMessage: "Error en la consulta de la base de datos",
                     alertIcon: "error",
                     showConfirmButton: true,
-                    timer: 3000,
+                    timer: 6000,
                     ruta: "register"
                 });
-            } else {
-                return res.render('login', {
+            }
+
+            if (results.length > 0) {
+                return res.render('Client/login', {
                     alert: true,
-                    alertTitle: "Éxito",
-                    alertMessage: "Usuario registrado correctamente",
-                    alertIcon: "success",
+                    alertTitle: "Error",
+                    alertMessage: "El correo electrónico ya está registrado",
+                    alertIcon: "error",
                     showConfirmButton: true,
-                    timer: 3000,
-                    ruta: "login"
+                    timer: 6000,
+                    ruta: "register"
                 });
             }
+
+            // Si el correo no está registrado, insertar el nuevo usuario
+            conexion.query('INSERT INTO usuario (Nombre, Apellido, Email, clave) VALUES (?, ?, ?, ?)', 
+            [firstname, lastname, email, passHash], 
+            (error, results) => {
+                if (error) {
+                    console.log(error);
+                    return res.render('Client/login', {
+                        alert: true,
+                        alertTitle: "Error",
+                        alertMessage: "Error al registrar usuario",
+                        alertIcon: "error",
+                        showConfirmButton: true,
+                        timer: 6000,
+                        ruta: "register"
+                    });
+                } else {
+                    return res.render('Client/login', {
+                        alert: true,
+                        alertTitle: "Éxito",
+                        alertMessage: "Usuario registrado correctamente",
+                        alertIcon: "success",
+                        showConfirmButton: true,
+                        timer: 3000,
+                        ruta: "login"
+                    });
+                }
+            });
         });
 
     } catch (error) {
@@ -51,7 +78,7 @@ exports.login = async (req, res) => {
         const { email, pass } = req.body;
 
         if (!email || !pass) {
-            return res.render('login', {
+            return res.render('Client/login', {
                 alert: true,
                 alertTitle: 'Error',
                 alertMessage: 'Por favor ingrese un email y contraseña',
@@ -61,11 +88,12 @@ exports.login = async (req, res) => {
                 ruta: 'login'
             });
         }
-/* SE CONSULTA A LA BASE DE DATOS SI EXISTE ESTA PERSONA */
+
+        // SE CONSULTA A LA BASE DE DATOS SI EXISTE ESTA PERSONA
         conexion.query('SELECT * FROM usuario WHERE Email = ?', [email], async (error, results) => {
             if (error) {
                 console.error('Error en la consulta de la base de datos:', error);
-                return res.render('login', {
+                return res.render('Client/login', {
                     alert: true,
                     alertTitle: "Error",
                     alertMessage: "Error al buscar usuario",
@@ -78,7 +106,7 @@ exports.login = async (req, res) => {
 
             if (results.length === 0) {
                 console.log("Usuario no encontrado con ese email");
-                return res.render('login', {
+                return res.render('Client/login', {
                     alert: true,
                     alertTitle: "Error",
                     alertMessage: "Usuario no encontrado",
@@ -94,7 +122,7 @@ exports.login = async (req, res) => {
 
             if (!passwordMatch) {
                 console.log("Contraseña incorrecta");
-                return res.render('login', {
+                return res.render('Client/login', {
                     alert: true,
                     alertTitle: "Error",
                     alertMessage: "Contraseña incorrecta",
@@ -113,20 +141,14 @@ exports.login = async (req, res) => {
 
             const cookiesOptions = {
                 expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES * 24 * 60 * 60 * 1000),
-                httpOnly: true
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production' // Solo para producción y solo lectura
             };
             res.cookie('jwt', token, cookiesOptions);
             console.log("Cookie 'jwt' configurada con las opciones:", cookiesOptions);
 
-            return res.render('login', {
-                alert: true,
-                alertTitle: "Conexión exitosa",
-                alertMessage: "¡LOGIN CORRECTO!",
-                alertIcon: 'success',
-                showConfirmButton: false,
-                timer: 800,
-                ruta: ''
-            });
+            // Redireccionar al dashboard o página de inicio después de login exitoso
+            return res.redirect('/');
         });
 
     } catch (error) {
@@ -168,6 +190,8 @@ exports.logout = (req, res) => {
     });
     res.redirect('/login');
 };
+
+
 
 
 
