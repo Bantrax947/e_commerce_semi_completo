@@ -7,10 +7,7 @@
     <title>Admin Page</title>
 
     <!-- font awesome cdn link  -->
-    <link
-        rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
-    />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
 
     <!-- custom css file link  -->
     <link rel="stylesheet" href="css/styleCrud.css" />
@@ -20,37 +17,42 @@
         <div class="form-background">
             <div class="admin-product-form-container">
                 <form id="productForm">
-                    <h3>add a new product</h3>
-                    <input type="text" placeholder="enter product name" id="productName" class="box" />
-                    <input type="file" accept="image/png, image/jpeg, image/jpg" id="productImage" class="box" />
-                    <input type="number" placeholder="enter product price" id="productPrice" class="box" />
-                    <input type="text" placeholder="enter product category" id="productCategory" class="box" />
-                    <input type="submit" class="btn" value="add product" />
+                    <h3>Agregar nuevo Producto</h3>
+                    <input type="text" placeholder="Ingresar el nombre del producto" id="productName" class="box" required />
+                    <input type="text" placeholder="Ingresar la ruta de la imagen" id="productImage" class="box" required />
+                    <input type="number" placeholder="Ingresar el precio del producto" id="productPrice" class="box" required />
+                    <input type="text" placeholder="Ingresar la categoria del producto" id="productCategory" class="box" required />
+                    <input type="submit" class="btn" value="Agregar Producto" />
                 </form>
+                
             </div>
         </div>
 
         <div class="product-display">
-            <table class="product-display-table">
+            <table class="product-display-table" id="productTable">
                 <thead>
                     <tr>
                         <th>Titulo</th>
                         <th>Imagen</th>
                         <th>Precio</th>
                         <th>Categoria</th>
-                        <th>Action</th>
+                        <th>Acción</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <% results.forEach((user) => { %>
+                    <% results.forEach((product) => { %>
                     <tr>
-                        <td><%= user.titulo %></td>
-                        <td><%= user.imagen %></td>
-                        <td><%= user.precio %></td>
-                        <td><%= user.id_categoria %></td>
+                        <td><%= product.titulo %></td>
+                        <td><img src="<%= product.imagen %>" height="100" alt="Producto"></td>
+                        <td><%= product.precio %></td>
+                        <td><%= product.id_categoria %></td>
                         <td>
-                            <!-- Aquí puedes añadir botones de acción, como editar y eliminar -->
-                        </td>
+                            
+                            <button class="btn edit-btn" data-product-id="<%= product.id %>"> <i class="fas fa-edit"></i> edit </button>
+
+                                <button class="btn delete-btn"> <i class="fas fa-trash"></i> delete </button>
+                            </td>
+                        
                     </tr>
                     <% }); %>
                 </tbody>
@@ -59,50 +61,74 @@
     </div>
 
     <script>
-        document.getElementById("productForm").addEventListener("submit", function (e) {
-            e.preventDefault();
+       document.getElementById("productTable").addEventListener("click", function(event) {
+    if (event.target.classList.contains("edit-btn")) {
+        const productId = event.target.dataset.productId;
+        window.location.href = `/put/${productId}`;
+    } else if (event.target.classList.contains("delete-btn")) {
+        deleteProduct(event.target);
+    }
+});
 
-            const productName = document.getElementById("productName").value;
-            const productPrice = document.getElementById("productPrice").value;
-            const productCategory = document.getElementById("productCategory").value;
-            const productImage = document.getElementById("productImage").files[0];
+});
 
-            if (productName && productPrice && productCategory && productImage) {
-                const reader = new FileReader();
-                reader.onload = function (event) {
-                    const newRow = document.createElement("tr");
-                    newRow.innerHTML = `
-                        <td><img src="${event.target.result}" height="100" alt=""></td>
-                        <td>${productName}</td>
-                        <td>${productCategory}</td>
-                        <td>$${productPrice}/-</td>
-                        <td>
-                            <button class="btn" onclick="editProduct(this)"> <i class="fas fa-edit"></i> edit </button>
-                            <button class="btn" onclick="deleteProduct(this)"> <i class="fas fa-trash"></i> delete </button>
-                        </td>
-                    `;
-                    document.getElementById("productTable").appendChild(newRow);
-                };
-                reader.readAsDataURL(productImage);
+document.getElementById("productForm").addEventListener("submit", function(e) {
+    e.preventDefault();
 
-                // Clear form
-                document.getElementById("productForm").reset();
-            }
-        });
+    const productData = {
+        productName: document.getElementById("productName").value,
+        productPrice: document.getElementById("productPrice").value,
+        productCategory: document.getElementById("productCategory").value,
+        productImage: document.getElementById("productImage").value
+    };
 
+    fetch("/add-product", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(productData)
+    })
+    .then(response => response.json())
+    .then(product => {
+        alert("Producto agregado exitosamente");
+
+        // Actualizar la tabla de productos en el frontend
+        const newRow = document.createElement("tr");
+        newRow.innerHTML = `
+            <td>${product.titulo}</td>
+            <td><img src="${product.imagen}" height="100" alt="Producto"></td>
+            <td>${product.precio}</td>
+            <td>${product.id_categoria}</td>
+            <td>
+                <button class="btn edit-btn"> <i class="fas fa-edit"></i> edit </button>
+                <button class="btn delete-btn"> <i class="fas fa-trash"></i> delete </button>
+            </td>
+        `;
+        document.querySelector("#productTable tbody").appendChild(newRow);
+    })
+    .catch(error => {
+        console.error("Error:", error);
+        alert("Error al agregar el producto");
+    });
+
+    // Clear form
+    document.getElementById("productForm").reset();
+});
+    
         function editProduct(button) {
             const row = button.parentElement.parentElement;
-            const name = row.children[1].textContent;
-            const category = row.children[2].textContent;
-            const price = row.children[3].textContent.substring(1, row.children[3].textContent.length - 2);
-
+            const name = row.children[0].textContent;
+            const price = row.children[2].textContent;
+            const category = row.children[3].textContent;
+    
             document.getElementById("productName").value = name;
-            document.getElementById("productCategory").value = category;
             document.getElementById("productPrice").value = price;
-            // Note: Image editing requires additional logic
+            document.getElementById("productCategory").value = category;
+            document.getElementById("productImage").value = row.children[1].querySelector('img').src;
             row.remove();
         }
-
+    
         function deleteProduct(button) {
             button.parentElement.parentElement.remove();
         }
