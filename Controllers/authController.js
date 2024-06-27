@@ -190,15 +190,3 @@ exports.logout = (req, res) => {
     });
     res.redirect('/login');
 };
-
-
-
-
-
-
-
-
-
-
-
-
