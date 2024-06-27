@@ -278,6 +278,7 @@ document.addEventListener("DOMContentLoaded", () => {
     fetch("/api/productos")
         .then(response => response.json())
         .then(data => {
+            console.log(data);
             productos = data;
             cargarProductos(productos);
         })

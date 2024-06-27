@@ -1,4 +1,4 @@
-const express = require('express');
+/* const express = require('express');
 const router = express.Router();
 const conexion = require('../DataBase/Conexion');
 
@@ -9,6 +9,7 @@ router.get('/get', (req, res) => {
             console.log("Error en la consulta de la base de datos");
             res.status(500).send("Error en la consulta de la base de datos");
         } else {
+            console.log(results); // Añade esto para verificar los resultados en la consola
             res.render('Admin/get', { results: results });
         }
     });
@@ -75,3 +76,4 @@ router.post('/update-product/:id', (req, res) => {
 });
 
 module.exports = router;
+ */

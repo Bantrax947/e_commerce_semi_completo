@@ -1,4 +1,4 @@
-/* 
+
 
 const express = require('express');
 const router = express.Router();
@@ -154,57 +154,5 @@ router.get('/carrito', (req, res) => {
 router.get('/logout', authController.logout);
 
 module.exports = router;
- */
 
-const express = require('express');
-const router = express.Router();
-const authController = require('../Controllers/authController');
-const rateLimit = require('express-rate-limit');
 
-// Aplica el rate limiter solo a la ruta de login
-const loginLimiter = rateLimit({
-    windowMs: 1 * 60 * 1000, // 1 minuto
-    max: 3, // Limita a 3 intentos por IP en el periodo de tiempo
-    handler: (req, res) => {
-        res.status(429).render('Client/login', {
-            alert: true,
-            alertTitle: 'Error',
-            alertMessage: 'Demasiados intentos de inicio de sesión desde esta IP, por favor intente de nuevo después de 1 minuto.',
-            alertIcon: 'error',
-            showConfirmButton: true,
-            timer: 3000,
-            ruta: 'login'
-        });
-    }
-});
-
-// Rutas públicas
-router.get('/login', (req, res) => {
-    res.render('Client/login', { alert: false });
-});
-
-router.get('/register', (req, res) => {
-    res.render('Client/login', { alert: false });
-});
-
-// Aplica el rate limiter en la ruta de login
-router.post('/login', loginLimiter, authController.login);
-
-// Rutas protegidas
-router.post('/register', authController.register);
-
-// Middleware de autenticación para proteger rutas
-router.use(authController.autenticacion);
-
-// Rutas protegidas
-router.get('/', (req, res) => {
-    res.render('Client/index');
-});
-
-router.get('/carrito', (req, res) => {
-    res.render('Client/carrito');
-});
-
-router.get('/logout', authController.logout);
-
-module.exports = router;
