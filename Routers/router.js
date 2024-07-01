@@ -1,5 +1,15 @@
-
-
+/*
+  Descripción:
+Controla el manejo de las rutas o direccionamientos entre los distintos archivos
+  del programa para que se ejecuten las funciones deseadas
+  Incluye: 
+-funciones de RATE LIMIT para el manejo de intentos de ingreso por Fuerza Bruta
+-Contiene momentaneamente las funciones del get y el put
+  Última modificación:
+1-7-2024
+  Autor:
+Fabián Franco
+*/
 const express = require('express');
 const router = express.Router();
 const authController = require('../Controllers/authController');

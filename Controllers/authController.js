@@ -1,9 +1,33 @@
+/*
+  Descripción:
+  Este archivo controla las funciones principales relacionadas con la autenticación de usuarios. 
+  Incluye métodos para el registro, inicio de sesión y autenticación continua mediante tokens JWT.
+
+  Funcionalidades:
+  - Registro de Usuario en la BD (validación de correo existente y encriptación de contraseña)
+  - Inicio de sesión (consulta a la BD para verificar credenciales y asignación de un token JWT)
+  - Generación de token y configuración de cookies (para mantener la sesión activa)
+  - Autenticación del usuario (verificación del token en la cookie y consulta a la BD)
+  - Cierre de sesión (revocación del token al limpiar la cookie)
+
+  Última modificación:
+  01-07-2024
+
+  Autor:
+  Fabián Franco
+*/        
 const { promisify } = require('util');
 const bcryptjs = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const conexion = require('../DataBase/Conexion');
-
-/* METODO PARA REGISTRAR USUARIO */
+/**
+ * MÉTODO PARA REGISTRAR UN NUEVO USUARIO A LA BD
+ * Este método recibe los datos del usuario desde el cuerpo de la solicitud, 
+ * verifica si el correo ya está registrado, y si no lo está, guarda el nuevo usuario en la base de datos.
+ *
+ * @param {Object} req - Objeto de solicitud que contiene los datos del usuario (nombre, apellido, email, contraseña).
+ * @param {Object} res - Objeto de respuesta para enviar la confirmación o error.
+ */
 exports.register = async (req, res) => {
     try {
         const { firstname, lastname, email, pass } = req.body;
@@ -70,9 +94,14 @@ exports.register = async (req, res) => {
         res.status(500).send('Error al registrar usuario');
     }
 };
-
-
-/* METODO PARA INICIAR SESION */
+/**
+ * MÉTODO PARA INICIAR SESIÓN
+ * Verifica si el correo y la contraseña proporcionados coinciden con un usuario en la base de datos,
+ * y si es así, genera un token JWT y configura una cookie para mantener la sesión del usuario.
+ *
+ * @param {Object} req - Objeto de solicitud que contiene el email y la contraseña del usuario.
+ * @param {Object} res - Objeto de respuesta para enviar la confirmación o redireccionar en caso de error.
+ */
 exports.login = async (req, res) => {
     try {
         const { email, pass } = req.body;
@@ -141,7 +170,7 @@ exports.login = async (req, res) => {
 
             const cookiesOptions = {
                 expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES * 24 * 60 * 60 * 1000),
-                httpOnly: true,
+                httpOnly: true,  //para que solo sea accedido por protoclos HTTP Y Evite ataques XSS POR JS
                 secure: process.env.NODE_ENV === 'production' // Solo para producción y solo lectura
             };
             res.cookie('jwt', token, cookiesOptions);
@@ -156,7 +185,15 @@ exports.login = async (req, res) => {
         res.status(500).send('Error en el servidor');
     }
 };
-/* METODO DE AUTENTICACIÓN DEL USUARIO */
+/**
+ * MÉTODO DE AUTENTICACIÓN DEL USUARIO.
+ * Verifica la existencia de una cookie que contiene un token JWT. Si el token es válido y corresponde a un usuario 
+ * en la base de datos, se permite el acceso; de lo contrario, se redirige al usuario a la página de inicio de sesión.
+ *
+ * @param {Object} req - Objeto de solicitud que contiene la cookie JWT.
+ * @param {Object} res - Objeto de respuesta para redireccionar en caso de error o autenticación fallida.
+ * @param {Function} next - Función para pasar al siguiente middleware.
+ */
 exports.autenticacion = async (req, res, next) => {
     if (req.cookies.jwt) {
         try {
@@ -181,8 +218,14 @@ exports.autenticacion = async (req, res, next) => {
         return res.redirect('/login');
     }
 };
-
-/* CIERRE DE SESION Y ELIMINACION DE TOKEN */
+/**
+ * MÉTODO PARA CERRAR SESIÓN Y ELIMINAR EL TOKEN
+ * Este método limpia la cookie que contiene el token JWT, lo que efectivamente cierra la sesión del usuario y 
+ * lo redirige a la página de inicio de sesión.
+ *
+ * @param {Object} req - Objeto de solicitud.
+ * @param {Object} res - Objeto de respuesta para redirigir al usuario.
+ */
 exports.logout = (req, res) => {
     res.cookie('jwt', '', {
         expires: new Date(0),

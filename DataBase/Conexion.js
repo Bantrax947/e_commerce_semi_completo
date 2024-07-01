@@ -1,4 +1,13 @@
-
+/*
+  Descripción:
+La conexion con la base de datos local de la computadora
+  Incluye:
+-El manejo de error de conexion con la BD
+  Última modificación: 
+1-7-2024
+  Autor:
+Fabián Franco
+*/
 require('dotenv').config();
 const mysql = require('mysql');
 
