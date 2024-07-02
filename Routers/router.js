@@ -1,40 +1,10 @@
-/*
-  Descripción:
-Controla el manejo de las rutas o direccionamientos entre los distintos archivos
-del programa para que se ejecuten las funciones deseadas
-
-  Incluye: 
--funciones de RATE LIMIT para el manejo de intentos de ingreso por Fuerza Bruta
--Contiene momentaneamente las funciones del get y el put
-  Última modificación:
-1-7-2024
-  Autor:
-Fabián Franco
-*/
-
+// Routers/router.js
 const express = require('express');
 const router = express.Router();
 const authController = require('../Controllers/authController');
 const conexion = require('../Models/Conexion');
-const rateLimit = require('express-rate-limit');
-const { admin } = require('googleapis/build/src/apis/admin');
-
-// Aplica el rate limiter solo a la ruta de login
-const loginLimiter = rateLimit({
-    windowMs: 1 * 60 * 1000, // 1 minuto
-    max: 3, // Limita a 3 intentos por IP en el periodo de tiempo
-    handler: (req, res) => {
-        res.status(429).render('Client/login', {
-            alert: true,
-            alertTitle: 'Error',
-            alertMessage: 'Demasiados intentos de inicio de sesión desde esta IP, por favor intente de nuevo después de 1 minuto.',
-            alertIcon: 'error',
-            showConfirmButton: true,
-            timer: 3000,
-            ruta: 'login'
-        });
-    }
-});
+const loginLimiter = require('../Middlewares/rateLimit');
+const authMiddleware = require('../Middlewares/auth');
 
 // Rutas públicas
 router.get('/login', (req, res) => {
@@ -52,7 +22,7 @@ router.post('/login', loginLimiter, authController.login);
 router.post('/register', authController.register);
 
 // Middleware de autenticación para proteger rutas
-router.use(authController.autenticacion);
+router.use(authMiddleware.autenticacion); // <-- Cambiado aquí
 
 // Rutas protegidas
 router.get('/', (req, res) => {
@@ -63,7 +33,7 @@ router.get('/carrito', (req, res) => {
     res.render('Client/carrito');
 });
 
-router.get('/logout', authController.logout);
+router.get('/logout', authMiddleware.logout); // <-- Cambiado aquí
 
 // Ruta para obtener los productos y renderizar la vista
 router.get('/get', (req, res) => {

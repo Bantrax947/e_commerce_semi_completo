@@ -1,29 +1,14 @@
- const express = require('express');
+// app.js
+const express = require('express');
 const path = require('path');
 const dotenv = require('dotenv');
 const cookieParser = require('cookie-parser');
 const morgan = require('morgan');
-const rateLimit = require('express-rate-limit');
-
 
 const app = express();
 
-// Define el límite de rate limiting
-const loginLimiter = rateLimit({
-    windowMs: 1 * 60 * 1000, // 1 minuto
-    max: 2, // Limita a 2 intentos por IP en el periodo de tiempo
-    handler: (req, res) => {
-        res.status(429).render('Client/login', {
-            alert: true,
-            alertTitle: 'Error',
-            alertMessage: 'Demasiados intentos de inicio de sesión desde esta IP, por favor intente de nuevo después de 1 minuto.',
-            alertIcon: 'error',
-            showConfirmButton: true,
-            timer: 3000,
-            ruta: 'login'
-        });
-    }
-});
+// Importar el middleware de rate limiting
+const loginLimiter = require('./Middlewares/rateLimit');
 
 // Configuración del motor de vistas
 app.set('view engine', 'ejs');
@@ -36,8 +21,6 @@ app.use(express.json());
 dotenv.config({ path: './env/.env' });
 app.use(cookieParser());
 app.use(morgan("dev"));
-
-
 
 // Para eliminar la cache 
 app.use(function(req, res, next) {
@@ -55,9 +38,6 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Servidor funcionando en el puerto ${PORT}`);
 });
- 
-
- 
 
 
 
