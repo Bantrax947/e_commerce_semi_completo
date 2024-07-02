@@ -19,7 +19,7 @@
 const { promisify } = require('util');
 const bcryptjs = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const conexion = require('../DataBase/Conexion');
+const conexion = require('../Models/Conexion');
 /**
  * MÉTODO PARA REGISTRAR UN NUEVO USUARIO A LA BD
  * Este método recibe los datos del usuario desde el cuerpo de la solicitud, 
