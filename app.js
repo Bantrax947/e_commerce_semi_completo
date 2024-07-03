@@ -34,38 +34,14 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
 // Middlewares
-
-/**
- * Servir archivos estáticos desde la carpeta 'public'.
- */
 app.use(express.static('public'));
-
 app.use(express.urlencoded({ extended: true }));
-
-/**
- * Parsear cuerpos de solicitudes en formato JSON.
- */
 app.use(express.json());
-
-/**
- * Configuración de variables de entorno desde el archivo .env.
- */
 dotenv.config({ path: './env/.env' });
-
-/**
- * Middleware para parsear cookies.
- */
 app.use(cookieParser());
-
-/**
- * Middleware de logging para registrar las solicitudes HTTP.
- */
 app.use(morgan("dev"));
 
 // Para eliminar la cache 
-/**
- * Middleware para eliminar la caché en respuestas para usuarios no autenticados.
- */
 app.use(function(req, res, next) {
     if (!req.user) {
         res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
@@ -74,9 +50,6 @@ app.use(function(req, res, next) {
 });
 
 // Llamar a la ruta
-/**
- * Middleware para usar las rutas definidas en 'router.js'.
- */
 app.use('/', require('./Routers/router'));
 
 // Conexión con el puerto

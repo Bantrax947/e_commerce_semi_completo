@@ -7,8 +7,6 @@
   - Registro de Usuario en la BD (validación de correo existente y encriptación de contraseña)
   - Inicio de sesión (consulta a la BD para verificar credenciales y asignación de un token JWT)
   - Generación de token y configuración de cookies (para mantener la sesión activa)
-  - Autenticación del usuario (verificación del token en la cookie y consulta a la BD)
-  - Cierre de sesión (revocación del token al limpiar la cookie)
 
   Última modificación:
   02-07-2024

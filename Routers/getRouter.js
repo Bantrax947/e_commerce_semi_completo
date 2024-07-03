@@ -18,9 +18,6 @@ const router = express.Router();
 const conexion = require('../Models/Conexion');
 
 /**
- * Ruta para obtener los productos y renderizar la vista
- * Realiza una consulta a la base de datos para obtener todos los productos y los pasa a la vista 'Admin/get'.
- *
  * @param {Object} req - Objeto de solicitud.
  * @param {Object} res - Objeto de respuesta para enviar los resultados de la consulta o un mensaje de error.
  */

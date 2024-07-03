@@ -18,9 +18,6 @@ const router = express.Router();
 const conexion = require('../Models/Conexion');
 
 /**
- * Ruta para agregar productos a la base de datos
- * Recibe los datos del producto desde el cuerpo de la solicitud y los inserta en la base de datos.
- *
  * @param {Object} req - Objeto de solicitud que contiene los datos del producto en el cuerpo.
  * @param {Object} res - Objeto de respuesta para enviar el nuevo producto o un mensaje de error.
  */
